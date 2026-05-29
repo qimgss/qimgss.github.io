@@ -61,7 +61,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: site-${{ matrix.site }}
+          name: site-$()
           path: ${{ matrix.site }}/.vitepress/dist
 
   deploy:
