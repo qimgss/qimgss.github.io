@@ -52,7 +52,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ${{ matrix.site }}
-        run: npm ci
+        run: npm install
 
       - name: Build VitePress
         working-directory: ${{ matrix.site }}
