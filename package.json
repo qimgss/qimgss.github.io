@@ -21,4 +21,16 @@
     "url": "https://github.com/qimgss/qimgss.github.io/issues"
   },
   "homepage": "https://github.com/qimgss/qimgss.github.io#readme"
+  {
+    "private": true,
+    "scripts": {
+      "docs:dev": "vitepress dev",
+      "docs:build": "vitepress build",
+      "docs:preview": "vitepress preview"
+    },
+  "devDependencies": {
+    "vitepress": "^1.0.0",
+    "vue": "^3.4.0"
+    }
+  }
 }
