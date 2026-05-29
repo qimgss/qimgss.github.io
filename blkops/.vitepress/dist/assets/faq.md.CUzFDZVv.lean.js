@@ -1,1 +1,0 @@
-import{c as o,Q as e,j as r,m as t}from"./chunks/framework.DS5OPS01.js";const b=JSON.parse('{"title":"FAQ","description":"","frontmatter":{"title":"FAQ"},"headers":[],"relativePath":"faq.md","filePath":"faq.md"}'),i={name:"faq.md"};function l(d,a,n,s,h,c){return e(),r("div",null,[...a[0]||(a[0]=[t("",15)])])}const m=o(i,[["render",l]]);export{b as __pageData,m as default};
