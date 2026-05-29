@@ -15,83 +15,43 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  detect:
-    runs-on: ubuntu-latest
-    outputs:
-      sites: ${{ steps.find.outputs.sites }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Find VitePress sites
-        id: find
-        run: |
-          sites=$(find . -name ".vitepress" -type d | sed 's|/.vitepress||' | jq -R -s -c 'split("\n")[:-1]')
-          echo "sites=$sites" >> $GITHUB_OUTPUT
-
+  # Build job
   build:
-    needs: detect
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        site: ${{ fromJson(needs.detect.outputs.sites) }}
-
+    defaults:
+      run:
+        working-directory: ./website
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles(format('{0}/package-lock.json', matrix.site)) }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
+          node-version: latest
+          cache: npm
+          cache-dependency-path: website/yarn.lock
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
       - name: Install dependencies
-        working-directory: ${{ matrix.site }}
-        run: npm install
-
-      - name: Build VitePress
-        working-directory: ${{ matrix.site }}
-        run: npx vitepress build .
+        run: npx install
+      - name: Build with VitePress
+        run: |
+          npx vitepress build .
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: site-${{ matrix.site }}
-          path: ${{ matrix.site }}/.vitepress/dist
+          path: website/docs/.vitepress/dist
 
   deploy:
-    needs: build
-    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Prepare final site
-        run: |
-          mkdir -p public
-          for dir in dist/site-*; do
-            site_name=$(basename "$dir" | sed 's/site-//')
-            mkdir -p "public/$site_name"
-            cp -r "$dir"/* "public/$site_name/"
-          done
-
-      - uses: actions/configure-pages@v4
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: public
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
