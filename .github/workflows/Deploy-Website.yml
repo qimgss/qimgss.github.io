@@ -38,22 +38,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
+          cache: npm
+          cache-dependency-path: ${{ matrix.site }}/package-lock.json
 
-      - name: Install deps
+      - name: Install dependencies
         working-directory: ${{ matrix.site }}
-        run: pnpm install
+        run: npm ci
 
       - name: Build VitePress
         working-directory: ${{ matrix.site }}
-        run: pnpm run docs:build
+        run: npm run docs:build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
