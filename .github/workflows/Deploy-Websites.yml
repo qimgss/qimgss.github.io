@@ -58,10 +58,14 @@ jobs:
         working-directory: ${{ matrix.site }}
         run: npx vitepress build .
 
+      - name: Set site name
+        id: site_name
+        run: echo "name=$(basename ${{ matrix.site }})" >> $GITHUB_OUTPUT
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: site-$()
+          name: site-${{ basename(matrix.site) }}
           path: ${{ matrix.site }}/.vitepress/dist
 
   deploy:
