@@ -1,0 +1,19 @@
+blkops/
+├─ .vitepress/
+│  └─ config.ts
+├─ index.md                 # 首页
+├─ guide/
+│  ├─ what-is-blkops.md    # 项目简介
+│  ├─ installation.md      # 安装 / 获取
+│  └─ quick-start.md       # 快速上手
+├─ cli/
+│  ├─ index.md             # CLI 概览
+│  ├─ search.md            # 搜索分区
+│  ├─ write.md             # 写入镜像
+│  ├─ dump.md              # 导出分区
+│  └─ examples.md          # 使用示例
+├─ build/
+│  ├─ index.md             # 构建总览
+│  ├─ windows.md           # Windows 构建
+│  └─ linux.md             # Linux 构建
+└─ faq.md                  # 常见问题

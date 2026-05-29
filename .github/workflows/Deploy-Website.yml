@@ -1,0 +1,94 @@
+name: Deploy VitePress Sites
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      sites: ${{ steps.find.outputs.sites }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find VitePress sites
+        id: find
+        run: |
+          sites=$(find . -name ".vitepress" -type d | sed 's|/.vitepress||' | jq -R -s -c 'split("\n")[:-1]')
+          echo "sites=$sites" >> $GITHUB_OUTPUT
+
+  build:
+    needs: detect
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        site: ${{ fromJson(needs.detect.outputs.sites) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install deps
+        working-directory: ${{ matrix.site }}
+        run: pnpm install
+
+      - name: Build VitePress
+        working-directory: ${{ matrix.site }}
+        run: pnpm run docs:build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ matrix.site }}
+          path: ${{ matrix.site }}/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Prepare final site
+        run: |
+          mkdir -p public
+          for dir in dist/site-*; do
+            site_name=$(basename "$dir" | sed 's/site-//')
+            mkdir -p "public/$site_name"
+            cp -r "$dir"/* "public/$site_name/"
+          done
+
+      - uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
