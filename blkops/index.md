@@ -4,11 +4,7 @@ title: blkops
 description: Android 设备 Block 分区操作工具（纯 Rust）
 ---
 
-# blkops
-
-<p align="center">
-  <img src="/logo.png" width="120" />
-</p>
+# blkops 
 
 <p align="center">
   <img src="https://img.shields.io/badge/rust-1.70%2B-orange.svg" />
@@ -33,8 +29,3 @@ description: Android 设备 Block 分区操作工具（纯 Rust）
 | ⚡ 高性能 | 直接操作 block 层，无中间抽象 |
 | 🛠 跨平台 | 支持 Windows / Linux 构建 |
 
----
-
-## 🚀 一分钟上手
-
-### 搜索分区
