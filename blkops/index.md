@@ -7,7 +7,7 @@ description: Android 设备 Block 分区操作工具（纯 Rust）
 # blkops
 
 <p align="center">
-  <img src="/logo.log" width="120" />
+  <img src="/logo.png" width="120" />
 </p>
 
 <p align="center">
